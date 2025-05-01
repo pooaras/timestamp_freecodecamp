@@ -23,6 +23,26 @@ app.get("/", function (req, res) {
 app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
+app.get("/api/:date_string", function (req, res) {
+  let date_string = req.params.date_string
+  if(!isNaN(date_string)){
+    const timeinsec = Number(date_string)
+    date = new Date(timeinsec < 1e12 ? timeinsec * 1000 : timeinsec)
+    //This works only because JavaScript will implicitly create a global variable when you assign a value to an undeclared variable (i.e., not using let, const, or var) — but only in non-strict mode.
+    //date becomes a global variable, even if you're inside a function. This can lead to hard-to-debug issues and conflicts.
+    // It's not allowed in strict mode ('use strict';) — which is recommended for safer, cleaner code.
+  }
+  else {
+    date = new Date(date_string);
+  }
+  if(isNaN(date.getTime())){
+    res.json({unix:'invalid',utc:"invalid_date"})
+  }
+  res.json({
+    unix: date.getTime(),
+    utc: date.toUTCString()
+  });
+});
 
 
 
